@@ -33,9 +33,10 @@ int main()
 // 1 frame = luma (4) + chroma (2)
 BYTE* get_luma(FILE* in, int w, int h, int f)
 {
-	BYTE* buffer = (BYTE*)malloc(w * h);
-	BYTE* skip = (BYTE*)malloc(w * h / 2); // skip chroma part
-	BYTE* luma = (BYTE*)malloc(w * h * f);
+	BYTE* buffer = (BYTE*)malloc(sizeof(BYTE) * w * h);
+	long skip = w * h / 2;
+
+	BYTE* luma = (BYTE*)malloc(sizeof(BYTE) * w * h * f);
 
 	for (int i = 0; i < f; i++)
 	{
@@ -44,10 +45,10 @@ BYTE* get_luma(FILE* in, int w, int h, int f)
 		{
 			luma[w * h * i + j] = buffer[j];
 		}
-		fread(skip, sizeof(BYTE), (w * h / 2), in);
+		fseek(in, skip, SEEK_CUR); // skip chroma part
+
 	}
 	free(buffer);
-	free(skip);
 
 	return luma;
 }
